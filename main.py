@@ -18,8 +18,7 @@ class playerSettings:
     hitbox = (10,200,10) # dimensions
     eyes = (0,80,5) # relative to startPos - so at front of player at 180 height relative to box
 
-def basicCyle(screen,w,h,clock):
-    
+def basicCyle(screen,w,h,clock,realPhysics=True):
     framerate = 0
     startTime = time.time()
     pg.mouse.set_visible(False)
@@ -71,7 +70,7 @@ def basicCyle(screen,w,h,clock):
         check = clock.tick(60)
 
         if(time.time() - startTime >= 1):
-            #print(framerate)
+            print(framerate)
             startTime = time.time()
             framerate = 0
        
@@ -102,8 +101,8 @@ def basicCyle(screen,w,h,clock):
             posChange = (posChange[0],posChange[1]-1,posChange[2])
         if(pressed[pg.K_SPACE] == True):
             posChange = (posChange[0],posChange[1]+1,posChange[2])
-          
-        player = px.playerPhysics(player,frameTime,objects,posChange,playerSettings.speed,playerSettings.accel)
+
+        player = px.playerPhysics(player,frameTime,objects,posChange,playerSettings.speed,playerSettings.accel,realPhysics)
         
         pos = mfn.calcObjectMidpoint(player["box"])
         pos = (pos[0]+playerSettings.eyes[0],
@@ -153,7 +152,7 @@ if(__name__ == "__main__"):
     #screen = pg.display.set_mode((0,0), pg.FULLSCREEN)
     screen = pg.display.set_mode((720,480))
     screen.fill([255,255,255])
-    pg.display.set_caption("3D FPS test")
+    pg.display.set_caption("3D test")
     w, h = pg.display.get_surface().get_size()
     clock = pg.time.Clock()
     
@@ -161,7 +160,7 @@ if(__name__ == "__main__"):
     # each dict is "face": [vertices], where the key is a description of the face
     # and the vertices are polygon coords 
     
-    basicCyle(screen,w,h,clock)
+    basicCyle(screen,w,h,clock,realPhysics=False)
 
     
     

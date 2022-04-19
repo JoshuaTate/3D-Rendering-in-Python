@@ -28,30 +28,43 @@ def moveObjects(objects,velocity,types,frameTime):
                                       objects[i][key][j][2]+velocity[i][2]*frameTime)
     return(objects)
 
-def playerPhysics(player,frameTime,objects,posChange,maxSpeed,accel):
-    playerCuboidList,velocityList = gravity([player["box"]],[player["velocity"]],[player["type"]],frameTime)
+def playerPhysics(player,frameTime,objects,posChange,maxSpeed,accel,realPhysics=True):
+    if(realPhysics):
+        playerCuboidList,velocityList = gravity([player["box"]],[player["velocity"]],[player["type"]],frameTime)
+    else:
+        playerCuboidList = [player["box"]]
+        velocityList = [player["velocity"]]
     player["box"] = playerCuboidList[0]
     player["velocity"] = velocityList[0]
-    player = movePlayer(posChange,player,maxSpeed,accel,frameTime)
+    player = movePlayer(posChange,player,maxSpeed,accel,frameTime,realPhysics)
     player = collisionDetection(objects,player,frameTime)
     playerCuboidList = moveObjects(playerCuboidList,velocityList,[player["type"]],frameTime)
     player["box"] = playerCuboidList[0]
     return(player)
 
-def movePlayer(posChange,player,maxSpeed,accel,frameTime):
-    
-    velocity = (player["velocity"][0]+accel*posChange[0]*frameTime,
-                player["velocity"][1],
-                player["velocity"][2]+accel*posChange[2]*frameTime)
+def movePlayer(posChange,player,maxSpeed,accel,frameTime,realPhysics=True):
+    if(realPhysics):
+        velocity = (player["velocity"][0]+accel*posChange[0]*frameTime,
+                    player["velocity"][1],
+                    player["velocity"][2]+accel*posChange[2]*frameTime)
+    else:
+        velocity = (player["velocity"][0]+accel*posChange[0]*frameTime,
+                    player["velocity"][1]+accel*posChange[1]*frameTime,
+                    player["velocity"][2]+accel*posChange[2]*frameTime)
     
     if(posChange[0] >= 0 and velocity[0] < 0):
         velocity = (min(velocity[0]+physicsParams.friction*frameTime,0),velocity[1],velocity[2])
     elif(posChange[0] <= 0 and velocity[0] > 0):
         velocity = (max(velocity[0]-physicsParams.friction*frameTime,0),velocity[1],velocity[2])
 
-    if(posChange[1] > 0):
+    if(posChange[1] > 0 and realPhysics): # Basically a jump rather than an "upwards fly" when trying to simulate realistic physics
         velocity = (velocity[0],maxSpeed,velocity[2])
-    
+    elif(not realPhysics):
+        if(posChange[1] >= 0 and velocity[1] < 0):
+            velocity = (velocity[0],min(velocity[1]+physicsParams.friction*frameTime,0),velocity[2])
+        elif(posChange[1] <= 0 and velocity[1] > 0):
+            velocity = (velocity[0],max(velocity[1]-physicsParams.friction*frameTime,0),velocity[2])
+        
     elif(posChange[2] <= 0 and velocity[2] > 0):
         velocity = (velocity[0],velocity[1],max(velocity[2]-physicsParams.friction*frameTime,0))
     magVel = math.sqrt(velocity[0]**2+velocity[2]**2)
