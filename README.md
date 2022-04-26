@@ -1,6 +1,7 @@
 # 3D-Rendering-in-Python
 
 *Type of project:* Experimental, self-learning
+
 *State of completion:* Complete and archived
 
 A (very) crude 3D rendering engine I made in Python as a learning experience when learning about the theory behind 3D games!
