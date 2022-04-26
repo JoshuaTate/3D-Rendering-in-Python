@@ -1,4 +1,4 @@
-# Game-engine-in-Python
+# 3D-Rendering-in-Python
 
 A (very) crude game engine I made in Python as a learning experience when learning about the theory behind 3D games!
 
